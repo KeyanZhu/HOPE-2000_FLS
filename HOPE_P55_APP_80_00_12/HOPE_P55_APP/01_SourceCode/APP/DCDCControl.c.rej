@@ -1,0 +1,314 @@
+diff a/HOPE_P55_APP/01_SourceCode/APP/DCDCControl.c b/HOPE_P55_APP/01_SourceCode/APP/DCDCControl.c	(rejected hunks)
+@@ -49,64 +49,65 @@
+ /********************************************************************************
+ * Internal variables															*
+ ********************************************************************************/
+ INT16U g_uwDCDCCtrlSts = cDCDCWait;							// DCDC������״̬
+ 
+ INT16U g_uwLLCOn = false;									// LLC Ĭ�ϷⲨ
+ INT16U gi_wDCDCConvPWMValue = 0;							// ʵ��ռ�ձ�
+ INT16U gi_wDCDCConvPWMValue1 = 0;							// ʵ��ռ�ձ�
+ INT16U gi_wDCDCConvPWMPeriod = 0;							// ʵ��Ƶ��(����ֵ)
+ INT16U gi_wDCDCConvPWMDTSet = cDCDCConvPWMDTSetLimit;		// ��������
+ 
+ INT16U uwLLCSoftCnt = 0;									// ռ�ձ��������
+ INT16U g_uwLLCPauseTime = 500;								// ��ʼ״̬����ʱ��
+ INT16U g_uwLLCMinDutyTime = 800;							// ��Сռ�ձȳ���ʱ��(���ռ�ձ�)
+ INT16U g_uwLLCSoftDutyRate = 100;//300;							// ÿ��ռ�ձ�����ʱ��
+ INT16U g_uwLLCSoftFreqRate = 4000;							// ÿ��Ƶ������ʱ��
+ INT16U gi_wDCDCConvPWMPeriodStart = cDCDCConvertPeriodMax;	// Ƶ��������ʼƵ��
+ INT16U gi_wDCDCConvPWMPeriodSet = cDCDCConvertPeriodDef;	// Ƶ���������Ƶ��
+ 
+ INT16U gi_wDCDCSoftDutyFinish = false;						// ռ�ձ�������ɱ�־
+ INT16U gi_wGridChgBatLowCutFlag = false;						// ��ص�ѹ���ռ�ձ�������ɱ�־
+ 
+ 
+ INT16U gi_wDCDCHighPWMDuty = 0;							// ��ѹ��ռ�ձ�
+ INT16U gi_wDCDCLowPWMDuty = 0;							// ��ѹ��ռ�ձ�
+-INT16U gi_wChgModeFlagEn = 1;							
++INT16U gi_wChgModeFlagEn = 0;							
+ INT16U gi_wHighSoftFinish = 0;	
+ 
+ INT16U gi_wDCDCHighPWMDutyLimit = 100;					//��ѹ��ռ�ձ�����
+ INT16U gi_wDCDCHighPWMDutyLimitRate = 2000;					//��ѹ��ռ�ձ�����
+ INT16U gi_wDCDCHighPWMDutyLimitRateCnt = 0;					//��ѹ��ռ�ձ�����
+ INT16U uwHighSoftCnt = 0;									// ռ�ձ��������
+ INT16U g_uwHighPauseTime = 1000;	
+ INT16U g_uwHighSoftDutyRate = 1000;
+ INT16U gi_wDCDCHighPWMDutyLimitInit = 100;					//��ѹ��ռ�ձ����Ƴ�ʼֵ
++INT16U gi_HighFinishCnt = 0;
+ 
+ 
+ INT16U gi_wDCDCLowPWMDutyLimit = 50;					//��ѹ��ռ�ձ�����
+-INT16U gi_wDCDCLowPWMDutyLimitRate = 2000;					//��ѹ��ռ�ձ�����
++INT16U gi_wDCDCLowPWMDutyLimitRate = 4000;					//��ѹ��ռ�ձ�����
+ INT16U gi_wDCDCLowPWMDutyLimitRateCnt = 0;					//��ѹ��ռ�ձ�����
+ INT16U uwLowSoftCnt = 0;									// ռ�ձ��������
+ INT16U g_uwLowPauseTime = 6000;	
+ INT16U g_uwLowSoftDutyRate = 2000;
+ INT16U gi_wDCDCLowPWMDutyLimitInit = 100;					//��ѹ��ռ�ձ����Ƴ�ʼֵ
+ INT16U gi_Trueflag = 0;				
+ 
+ 
+ 
+ /********************************************************************************
+ * Internal routine prototypes													*
+ ********************************************************************************/
+ 
+ 
+ /********************************************************************************
+ * Routines' implementations														*
+ ********************************************************************************/
+ void	sDCDCParaInit(void)
+ {
+ 	gi_wDCDCConvPWMPeriod = uwGetDcDcPWMPeriod();
+ 	gi_wDCDCConvPWMDTSet = uwGetDcDcPWMDutySet();
+ }
+ 
+ void	sClrDCDCCtrlPara(void)			// for test
+ {
+@@ -219,53 +220,58 @@
+ 				mEnDCDCHPWMOut();
+ 				mEnDCDCHForcePWMOut();		
+ 			}
+ 			else	// ��������󱣳�ռ�ձ�
+ 			{
+ 				gi_wDCDCHighPWMDuty = gi_wDCDCHighPWMDutyLimit;					//��ѹ��ռ�ձ�����;
+ 	
+ 				mEnDCDCHPWMOut();
+ 				mEnDCDCHForcePWMOut();	
+ 			}
+ 			
+ 			if((swGetTriChgFlag() == false) && (gi_wDCDCHighPWMDuty > 80))            //�˳����ʱ���Ӹ�ѹ��ռ�ձ�ֱ������, �ҵ�ѹ���ռ�ձ�
+ //			if(gi_Trueflag == true)
+ 			{
+ 				if(gi_wDCDCHighPWMDutyLimit < (gi_wDCDCConvPWMPeriod >> 1) - gi_wDCDCConvPWMDTSet)
+ 				{
+ 					if(++gi_wDCDCHighPWMDutyLimitRateCnt >= gi_wDCDCHighPWMDutyLimitRate)
+ 					{
+ 						gi_wDCDCHighPWMDutyLimitRateCnt = 0;
+ 						gi_wDCDCHighPWMDutyLimit++;
+ 					}
+ 				}
+ 				else
+ 				{
+ 					gi_wDCDCHighPWMDutyLimit = (gi_wDCDCConvPWMPeriod >> 1) - gi_wDCDCConvPWMDTSet;
+-					gi_wHighSoftFinish = true;
++					if(++gi_HighFinishCnt > 30000)
++					{
++						gi_HighFinishCnt = 0;
++						gi_wHighSoftFinish = true;
++					}
+ 					
+ 				}
++				
+ 				//��ѹ�໥����  �����ѹ��
+ 				if(gi_wHighSoftFinish == true)
+ 				{				
+ 					if(g_uwLowPauseTime > 0)		// ���뷢���������ѹ���Ƚ���һ��ʱ��Ⲩ���֣�����������
+ 					{
+ 						g_uwLowPauseTime--;
+ 						gi_wDCDCLowPWMDuty = 0;
+ 						gi_wDCDCConvPWMPeriod = uwGetDcDcPWMPeriod();
+ 					}
+ 					else if(gi_wDCDCLowPWMDuty < gi_wDCDCLowPWMDutyLimit)					//��ѹ��ռ�ձ�����)		// ռ�ձ�����
+ 					{
+ 						if(++uwLowSoftCnt >= g_uwLowSoftDutyRate)
+ 						{
+ 							uwLowSoftCnt = 0;
+ 							gi_wDCDCLowPWMDuty++;
+ 						}
+ 					
+ 						mEnDCDCPWMOut();
+ 						mEnDCDCForcePWMOut();		
+ 					}
+ 					else	// ��������󱣳�ռ�ձ�
+ 					{
+ 						gi_wDCDCLowPWMDutyLimit = gi_wDCDCLowPWMDutyLimit;					//��ѹ��ռ�ձ�����;
+ 			
+ 						mEnDCDCPWMOut();
+@@ -274,124 +280,114 @@
+ 					}
+ 					
+ 					if(gi_wDCDCLowPWMDutyLimit < (gi_wDCDCConvPWMPeriod >> 1) - gi_wDCDCConvPWMDTSet)
+ 					{
+ 						if(++gi_wDCDCLowPWMDutyLimitRateCnt >= gi_wDCDCLowPWMDutyLimitRate)
+ 						{
+ 							gi_wDCDCLowPWMDutyLimitRateCnt = 0;
+ 							gi_wDCDCLowPWMDutyLimit++;
+ 						}
+ 					}
+ 					else
+ 					{
+ 						gi_wDCDCLowPWMDutyLimit = (gi_wDCDCConvPWMPeriod >> 1) - gi_wDCDCConvPWMDTSet;
+ //						gi_wHighSoftFinish = true;
+ 						
+ 					}
+ 						
+ 				}
+ 				else
+ 				{
+ 
+ 				}
+ 			}
+ 			else
+ 			{
+-				gi_wHighSoftFinish = false;
+-				mDisDCDCForcePWMOut();
+-				mEnDCDCHPWMOut();
+-				mEnDCDCHForcePWMOut();	
+-//				if(gi_wDCDCLowPWMDutyLimit > 0)
+-//				{
+-//					gi_wDCDCLowPWMDutyLimit--;
+-//				}
+-//				if(gi_wDCDCHighPWMDutyLimit > gi_wDCDCHighPWMDutyLimitInit)
+-//				{
+-//					gi_wDCDCHighPWMDutyLimit = gi_wDCDCHighPWMDutyLimitInit;
+-//				}
++//				gi_wHighSoftFinish = false;
++//				mDisDCDCForcePWMOut();
++//				mEnDCDCHPWMOut();
++//				mEnDCDCHForcePWMOut();	
++
+ 			}
+ 			
+ 			//��ѹ��ռ�ձȴ��ڵ�ѹ��ռ�ձ�
+ 			if(gi_wDCDCLowPWMDutyLimit > gi_wDCDCHighPWMDutyLimit)
+ 			{
+ 				gi_wDCDCLowPWMDutyLimit =  gi_wDCDCHighPWMDutyLimit;
+ 			}
+-//			if(gi_wDCDCLowPWMDutyLimit > 262)
+-//			{
+-//				gi_wDCDCLowPWMDutyLimit =  262;
+-//			}
++
+ 			
+ 			//   ��ѹ��ռ�ձ�����
+ 			wLimitTemp = (gi_wDCDCConvPWMPeriod >> 1) - gi_wDCDCConvPWMDTSet;
+ 			if(gi_wDCDCHighPWMDutyLimit > wLimitTemp)
+ 			{
+ 				gi_wDCDCHighPWMDutyLimit = wLimitTemp;
+ 			}
+ 			if(gi_wDCDCHighPWMDuty > wLimitTemp)
+ 			{
+ 				gi_wDCDCHighPWMDuty = wLimitTemp;
+ 			}
+ 			if(gi_wDCDCHighPWMDuty > gi_wDCDCHighPWMDutyLimit)
+ 			{
+ 				gi_wDCDCHighPWMDuty = gi_wDCDCHighPWMDutyLimit;
+ 			}
+ 			//   ��ѹ��ռ�ձ�����
+ 			if(gi_wDCDCLowPWMDutyLimit > wLimitTemp)
+ 			{
+ 				gi_wDCDCLowPWMDutyLimit = wLimitTemp;
+ 			}
+ 			if(gi_wDCDCLowPWMDuty > wLimitTemp)
+ 			{
+ 				gi_wDCDCLowPWMDuty = wLimitTemp;
+ 			}
+ 			if(gi_wDCDCLowPWMDuty > gi_wDCDCLowPWMDutyLimit)
+ 			{
+ 				gi_wDCDCLowPWMDuty = gi_wDCDCLowPWMDutyLimit;
+ 			}
+ //			Uplimit(gi_wDCDCHighPWMDuty, gi_wDCDCHighPWMDutyLimit);
+ //			Uplimit(gi_wDCDCHighPWMDuty, wLimitTemp);
+ 			
+ 			if((swGetAdcBusVoltReal() >= 3000) && (gi_wDCDCHighPWMDuty > 40))
+ 			{
+ 				sSetDCDCCtrlSts(cDCDCWork);
+ 			}
+ 			
+ 			mDCDCConvPRD12 = gi_wDCDCConvPWMPeriod;	// L
+ 			mDCDCConvPWM1 = gi_wDCDCConvPWMPeriod - gi_wDCDCLowPWMDuty;
+ 			mDCDCConvPWM2 = gi_wDCDCLowPWMDuty;
+ 
+ 			mDCDCConvPRD34 = gi_wDCDCConvPWMPeriod;	// H
+ 			mDCDCConvPWM3 = gi_wDCDCConvPWMPeriod - gi_wDCDCHighPWMDuty;
+ 			mDCDCConvPWM4 = gi_wDCDCHighPWMDuty;
+ 
+ 			
+ 			
+ 		}
+ 		else //if(gi_wGridChgBatLowCutFlag == false)
+ 		{
+ 			//������������
+-	/*
++	
+ 			if(g_uwLLCPauseTime > 0)		// ���뷢�����Ƚ���һ��ʱ��Ⲩ���֣�����������
+ 			{
+ 				g_uwLLCPauseTime--;
+ 				mDisDCDCForcePWMOut();
+ 				mDisDCDCHForcePWMOut();
+ 				gi_wDCDCConvPWMValue = 0;
+ 				gi_wDCDCConvPWMPeriod = uwGetDcDcPWMPeriod();
+ 			}
+ 			else if(g_uwLLCMinDutyTime > 0)	// ��Сռ�ձ�����һ��ʱ��
+ 			{
+ 				g_uwLLCMinDutyTime--;
+ 				gi_wDCDCConvPWMValue = cDCDCConvertDutyStart;
+ 				gi_wDCDCConvPWMPeriod = uwGetDcDcPWMPeriod();
+ 	//			mDisDCDCForcePWMOut();
+ 				mEnDCDCPWMOut();
+ 				mEnDCDCHPWMOut();
+ 				mEnDCDCForcePWMOut();
+ 				mEnDCDCHForcePWMOut();
+ 			}
+ 			else if(gi_wDCDCConvPWMValue < ((uwGetDcDcPWMPeriod()>>1) - gi_wDCDCConvPWMDTSet))		// ռ�ձ�����
+ 			{
+ 				if(++uwLLCSoftCnt >= g_uwLLCSoftDutyRate)
+ 				{
+ 					uwLLCSoftCnt = 0;
+ 					gi_wDCDCConvPWMValue++;
+@@ -483,51 +479,51 @@
+ 			}
+ 
+ 
+ 			// ȷ���ڵ�ǰƵ���£�ռ�ձȲ����趨ֵ����������
+ 			wTemp = (gi_wDCDCConvPWMPeriod >> 1) - gi_wDCDCConvPWMDTSet;
+ 			if(gi_wDCDCConvPWMValue > wTemp)
+ 			{
+ 				gi_wDCDCConvPWMValue = wTemp;
+ 			}
+ 
+ 			// ռ�ձȴﵽһ��ֵ���������WORK
+ 			// ��ѹ��ֵ��Ҫʵʱ���㣬ռ�ձ�ֵ����д�� for test
+ 			if((swGetAdcBusVoltReal() >= 3000) && (gi_wDCDCConvPWMValue > 300))
+ 			{
+ 				sSetDCDCCtrlSts(cDCDCWork);
+ 			}
+ 
+ 			// ����Ƶ�ʺ�ռ�ձ�
+ 			mDCDCConvPRD12 = gi_wDCDCConvPWMPeriod;	// L
+ 			mDCDCConvPWM1 = gi_wDCDCConvPWMPeriod - gi_wDCDCConvPWMValue;
+ 			mDCDCConvPWM2 = gi_wDCDCConvPWMValue;
+ 
+ 			mDCDCConvPRD34 = gi_wDCDCConvPWMPeriod;	// H
+ 			mDCDCConvPWM3 = gi_wDCDCConvPWMPeriod - gi_wDCDCConvPWMValue;
+ 			mDCDCConvPWM4 = gi_wDCDCConvPWMValue;
+-			*/
++			
+ 		}		
+ 	}
+ }
+ 
+ 
+ /********************************************************************************
+ * Output interface Routines														*
+ ********************************************************************************/
+ INT16U	suwGetDCDCCtrlSts(void)							// ��ȡDCDC������״̬
+ {
+ 	return g_uwDCDCCtrlSts;
+ }
+ 
+ INT16U	suwGetLLCCtrlSts(void)							// ��ȡLLC������״̬
+ {
+ 	return g_uwLLCOn;
+ }
+ 
+ INT16U	suwGetDCDCConvPWMPeriod(void)					// ��ȡDCDC����ʵ��Ƶ�ʼĴ���ֵ
+ {
+ 	return gi_wDCDCConvPWMPeriod;
+ }
+ 
+ INT16U	suwGetDCDCConvPWMValue(void)					// ��ȡDCDCռ�ձ�ʵ��ֵ
+ {

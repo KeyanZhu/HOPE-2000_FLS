@@ -1,0 +1,21 @@
+---- sSocData.bVoltageCaliSoc Matches (22 in 3 files) ----
+swSocCalibration in Soc.c (DRIVER\Soc) : 			sSocOutput.bSoc = sSocData.bVoltageCaliSoc;
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) : 		sSocData.bVoltageCaliSoc = 0;
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) : 	    sSocData.wVoltCaliRealCapacity = (INT16U)((INT32U)sSocData.bVoltageCaliSoc * sSocData.wVoltCaliMaxCapacity / 100);
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) : 		sSocData.bVoltageCaliSoc = 100;
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) :     	sSocData.wVoltCaliRealCapacity = (INT16U)((INT32U)sSocData.bVoltageCaliSoc * sSocData.wVoltCaliMaxCapacity / 100);
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) : 		sSocData.bVoltageCaliSoc = 0;
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) : 		sSocData.wVoltCaliRealCapacity = (INT16U)((INT32U)sSocData.bVoltageCaliSoc * sSocData.wVoltCaliMaxCapacity / 100);
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) : 			sSocData.bVoltageCaliSoc = 0;//重新校准
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) : 			sSocData.wVoltCaliRealCapacity = (INT16U)((INT32U)sSocData.bVoltageCaliSoc * sSocData.wVoltCaliMaxCapacity / 100);
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) : 			sSocData.bVoltageCaliSoc = 100;//重新校准
+sSocV_CaliCheck in Soc_cali.c (DRIVER\Soc) : 			sSocData.wVoltCaliRealCapacity = (INT16U)((INT32U)sSocData.bVoltageCaliSoc * sSocData.wVoltCaliMaxCapacity / 100);
+sSoc_OCV_Cali in Soc_cali.c (DRIVER\Soc) : 			sSocData.bVoltageCaliSoc = 0;
+sSoc_OCV_Cali in Soc_cali.c (DRIVER\Soc) : 			sSocData.bVoltageCaliSoc = sSocConfig.bChgStartSoc;
+sSoc_OCV_Cali in Soc_cali.c (DRIVER\Soc) : 			sSocData.bVoltageCaliSoc = 100;
+sSoc_OCV_Cali in Soc_cali.c (DRIVER\Soc) : 			sSocData.bVoltageCaliSoc = sSocConfig.bDhgStartSoc;
+sSoc_OCV_Cali in Soc_cali.c (DRIVER\Soc) : 				sSocData.bVoltageCaliSoc = sSocData.bBaseSoc + i;
+sSoc_OCV_Cali in Soc_cali.c (DRIVER\Soc) : 	sSocData.bVoltageCaliSoc = ((bVoltageCaliSocScale * sSocData.bVoltageCaliSoc) + ((100-bVoltageCaliSocScale) * sSocData.bNowSoc)) / 100;
+sSoc_OCV_Cali in Soc_cali.c (DRIVER\Soc) : 	sSocData.bVoltageCaliSoc = sSocV_EndProcess(sSocData.bVoltageCaliSoc);//末端处理
+sSoc_OCV_Cali in Soc_cali.c (DRIVER\Soc) : 	sSocData.wVoltCaliRealCapacity = sSocData.bVoltageCaliSoc * sSocData.wVoltCaliMaxCapacity / 100;
+sSoc_Updata in Soc_data.c (DRIVER\Soc) : 		sSocData.bVoltageCaliSoc = sSocInput.bNowSoc;

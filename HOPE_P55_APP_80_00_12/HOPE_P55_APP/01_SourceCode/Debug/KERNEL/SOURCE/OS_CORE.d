@@ -1,0 +1,15 @@
+# FIXED
+
+KERNEL/SOURCE/OS_CORE.obj: ../KERNEL/SOURCE/OS_CORE.c
+KERNEL/SOURCE/OS_CORE.obj: D:/HOPE-2000/A_second/HOPE_P55_APP_80_00_12/HOPE_P55_APP/01_SourceCode/Kernel/Kernel.h
+KERNEL/SOURCE/OS_CORE.obj: D:/HOPE-2000/A_second/HOPE_P55_APP_80_00_12/HOPE_P55_APP/01_SourceCode/kernel/ports/OS_CPU.h
+KERNEL/SOURCE/OS_CORE.obj: D:/HOPE-2000/A_second/HOPE_P55_APP_80_00_12/HOPE_P55_APP/01_SourceCode/kernel/ports/os_config.h
+
+../KERNEL/SOURCE/OS_CORE.c:
+
+D:/HOPE-2000/A_second/HOPE_P55_APP_80_00_12/HOPE_P55_APP/01_SourceCode/Kernel/Kernel.h:
+
+D:/HOPE-2000/A_second/HOPE_P55_APP_80_00_12/HOPE_P55_APP/01_SourceCode/kernel/ports/OS_CPU.h:
+
+D:/HOPE-2000/A_second/HOPE_P55_APP_80_00_12/HOPE_P55_APP/01_SourceCode/kernel/ports/os_config.h:
+
