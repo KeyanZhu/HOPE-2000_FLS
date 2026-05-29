@@ -49,6 +49,7 @@ ToChg模式 --> Chg模式 : 软起成功
 
 
 @startuml
+skinparam dpi 200
 title LLC软起
 state "LLC软起" as Login
 state Login {
