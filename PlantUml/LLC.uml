@@ -55,6 +55,7 @@ state "LLC软起" as Login
 state Login {
 [*]  --> 软起LLC策略 : 策略逻辑
 软起LLC策略 --> ToChg模式充电标志 
+ToChg模式充电标志 : Yes : 高压充电LLC启机逻辑\nNo : 正常起推挽和LLC
 ToChg模式充电标志 --> 高压侧软起 : yes
 高压侧软起 : 占空比约0.2
 高压侧软起 --> 涓流充电标志 : 充电
